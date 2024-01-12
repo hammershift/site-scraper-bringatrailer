@@ -12,8 +12,8 @@ mongoose.connect(process.env.DB_URI);
 mongoose.connection.on('connected', () => {
   console.log('MongoDB connection has been established');
 
-  // startScrapeCronJob();
-  // startUpdateStatusCronJob();
+  startScrapeCronJob();
+  startUpdateStatusCronJob();
 });
 
 app.use(express.json());

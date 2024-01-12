@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 import checkAndUpdateAuctionStatus from '../controller/updateStatusController.js';
 
 const startUpdateStatusCronJob = () => {
-  cron.schedule('46 18 * * *', async () => {
+  cron.schedule('45 9 * * *', async () => {
     console.log('Starting status update job...');
     const browser = await puppeteer.launch({ headless: 'new' });
 

@@ -321,6 +321,14 @@ const getDataFromPage = async (url, browser) => {
 };
 
 const outputData = async () => {
+  try {
+    const jsonContent = JSON.stringify(currentAuctionData);
+    await fs.writeFile('bringatrailer-current-data.json', jsonContent, 'utf-8');
+    console.log('JSON File written successfully');
+  } catch (error) {
+    console.error('Error writing JSON File:', error);
+  }
+
   // save to MongoDB
   for (const item of currentAuctionData) {
     try {
