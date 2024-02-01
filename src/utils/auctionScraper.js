@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 import mongoose from 'mongoose';
-import fs from 'fs'
+import fs from 'fs';
 import Auction from '../model/Auction';
 
 const website = 'https://bringatrailer.com/auctions/';
