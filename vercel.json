@@ -3,5 +3,11 @@
         "deploymentEnabled": {
             "develop": false
         }
-    }
+    },
+    "crons": [
+        {
+            "path": "/api/triggerCronJob",
+            "schedule": "0 8 * * *"
+        }
+    ]
 }
