@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import mongoose from 'mongoose';
 import fs from 'fs';
 import Auction from '../model/Auction';
+import chromium from 'chrome-aws-lambda';
 
 const website = 'https://bringatrailer.com/auctions/';
 const batchSize = 20;
@@ -506,7 +507,13 @@ async function checkAndUpdateAuctionStatus(browser) {
 
 const scrapeAuctions = async () => {
   console.log('Cron job started');
-  const browser = await puppeteer.launch({ headless: 'new' });
+  // const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
 
   try {
     // for scraping new data
