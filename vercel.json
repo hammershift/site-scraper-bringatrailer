@@ -6,8 +6,8 @@
     },
     "crons": [
         {
-            "path": "/api/auctionWinner",
-            "schedule": "0 9 * * *"
+            "path": "/api/triggerCronJob",
+            "schedule": "0 8 * * *"
         }
     ]
 }
