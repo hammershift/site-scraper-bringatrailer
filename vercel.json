@@ -3,5 +3,11 @@
         "deploymentEnabled": {
             "develop": false
         }
-    }
+    },
+    "crons": [
+        {
+            "path": "/api/auctionWinner",
+            "schedule": "0 9 * * *"
+        }
+    ]
 }
