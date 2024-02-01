@@ -3,7 +3,7 @@
 
 // export default nextConfig;
 
-module.exports = {
+export default {
   webpack(config, options) {
     config.module.rules.push({
       test: /\.map$/,
