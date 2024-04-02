@@ -1,9 +1,10 @@
-import puppeteer from 'puppeteer';
-// import puppeteer from 'puppeteer-core';
+// import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import mongoose from 'mongoose';
 import fs from 'fs';
 import Auction from '../model/Auction';
 import chromium from 'chrome-aws-lambda';
+const puppeteer = chromium.puppeteer;
 
 const website = 'https://bringatrailer.com/auctions/';
 const batchSize = 20;
@@ -459,7 +460,7 @@ async function checkAndUpdateAuctionStatus(browser) {
 
       const currentStatus = await page.evaluate(() => {
         const availableInfo = document.querySelector('.listing-available-info');
-        if (!availableInfo) return 1; 
+        if (!availableInfo) return 1;
         if (availableInfo.innerHTML.includes('Sold for')) {
           return 2; // completed
         } else if (availableInfo.innerHTML.includes('Bid to') || availableInfo.innerHTML.includes('Withdrawn on')) {
@@ -508,7 +509,8 @@ const scrapeAuctions = async () => {
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+    // headless: chromium.headless,
+    headless: 'new',
   });
 
   try {
@@ -537,7 +539,8 @@ const updateAuctionStatus = async () => {
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
-    headless: chromium.headless,
+    // headless: chromium.headless,
+    headless: 'new',
   });
 
   try {
@@ -556,6 +559,6 @@ const updateAuctionStatus = async () => {
   }
 };
 
-export default scrapeAuctions; 
+export default scrapeAuctions;
 
-export { updateAuctionStatus }
+export { updateAuctionStatus };
