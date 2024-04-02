@@ -1068,7 +1068,8 @@ const scrapeAuctions = async () => {
   console.log('Scraping job started');
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: `/usr/bin/google-chrome`,
+    args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`],
   });
 
   try {
@@ -1092,7 +1093,8 @@ const updateAuctionStatus = async () => {
   console.log('Status update job started');
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    executablePath: `/usr/bin/google-chrome`,
+    args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`],
   });
 
   try {
