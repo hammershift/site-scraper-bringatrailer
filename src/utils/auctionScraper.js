@@ -1067,7 +1067,7 @@ async function checkAndUpdateAuctionStatus(browser) {
 const scrapeAuctions = async () => {
   console.log('Scraping job started');
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: 'new',
     executablePath: `/usr/bin/google-chrome`,
     args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`],
   });
@@ -1092,7 +1092,7 @@ const scrapeAuctions = async () => {
 const updateAuctionStatus = async () => {
   console.log('Status update job started');
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: 'new',
     executablePath: `/usr/bin/google-chrome`,
     args: [`--no-sandbox`, `--headless`, `--disable-gpu`, `--disable-dev-shm-usage`],
   });
