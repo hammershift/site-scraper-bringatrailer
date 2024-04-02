@@ -1067,8 +1067,8 @@ async function checkAndUpdateAuctionStatus(browser) {
 const scrapeAuctions = async () => {
   console.log('Scraping job started');
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--hide-scrollbars', '--disable-web-security'],
-    headless: 'new',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   try {
@@ -1091,9 +1091,10 @@ const scrapeAuctions = async () => {
 const updateAuctionStatus = async () => {
   console.log('Status update job started');
   const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--hide-scrollbars', '--disable-web-security'],
-    headless: 'new',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
+
   try {
     await checkAndUpdateAuctionStatus(browser);
     console.log('Status update job finished');
