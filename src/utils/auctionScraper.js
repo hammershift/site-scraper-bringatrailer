@@ -1,5 +1,5 @@
-// import puppeteer from 'puppeteer';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer-core';
 import mongoose from 'mongoose';
 import fs from 'fs';
 import Auction from '../model/Auction';
