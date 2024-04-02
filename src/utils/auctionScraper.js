@@ -510,7 +510,7 @@ const scrapeAuctions = async () => {
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
     // headless: chromium.headless,
-    headless: 'new',
+    headless: true,
   });
 
   try {
@@ -540,7 +540,7 @@ const updateAuctionStatus = async () => {
     defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
     // headless: chromium.headless,
-    headless: 'new',
+    headless: true,
   });
 
   try {
