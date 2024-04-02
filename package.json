@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@puppeteer/browsers": "^2.2.0",
     "chrome-aws-lambda": "^10.1.0",
     "file-system": "^2.2.2",
     "mongoose": "^8.1.1",
