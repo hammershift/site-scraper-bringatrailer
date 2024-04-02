@@ -4,12 +4,6 @@
       "develop": false
     }
   },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node"
-    }
-  ],
   "crons": [
     {
       "path": "/api/scrapeAuctions",
