@@ -1,13 +1,17 @@
 {
-    "git": {
-        "deploymentEnabled": {
-            "develop": false
-        }
+  "git": {
+    "deploymentEnabled": {
+      "develop": false
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/scrapeAuctions",
+      "schedule": "30 7 * * *"
     },
-    "crons": [
-        {
-            "path": "/api/triggerCronJob",
-            "schedule": "0 8 * * *"
-        }
-    ]
+    {
+      "path": "/api/updateAuctionStatus",
+      "schedule": "30 9 * * *"
+    }
+  ]
 }

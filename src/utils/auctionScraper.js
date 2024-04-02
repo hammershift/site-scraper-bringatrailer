@@ -430,7 +430,6 @@ async function getFinalPriceFromPage(url, browser) {
 }
 
 async function checkAndUpdateAuctionStatus(browser) {
-  // Fetch all auctions
   const auctions = await Auction.find({
     $or: [
       { 'attributes.value': 1 }, // live auctions
@@ -440,46 +439,46 @@ async function checkAndUpdateAuctionStatus(browser) {
     ],
   });
 
+  const batchSize = 20;
   console.log(`Starting status check for ${auctions.length} auctions`);
-  console.log(`Checking status of ${auctions.length} auctions`);
 
-  for (const auction of auctions) {
-    console.log(`Processing auction ID: ${auction.auction_id}, URL: ${auction.page_url}`);
-    if (!auction.page_url || typeof auction.page_url !== 'string') {
-      console.error(`Invalid URL for auctionID: ${auction.auction_id}`);
-      continue;
-    }
+  for (let i = 0; i < auctions.length; i += batchSize) {
+    const batch = auctions.slice(i, i + batchSize);
+    console.log(`Processing auctions ${i + 1} to ${i + batch.length} out of ${auctions.length}`);
 
-    console.log(`Checking auction at URL: ${auction.page_url}`);
-    const page = await browser.newPage();
-    try {
+    for (const auction of batch) {
+      console.log(`Processing auction ID: ${auction.auction_id}, URL: ${auction.page_url}`);
+
+      if (!auction.page_url || typeof auction.page_url !== 'string') {
+        console.error(`Invalid URL for auctionID: ${auction.auction_id}`);
+        continue;
+      }
+
+      const page = await browser.newPage();
       await page.goto(auction.page_url, { waitUntil: 'networkidle0', timeout: 90000 });
 
       const currentStatus = await page.evaluate(() => {
-        const AuctionStatusEnum = {
-          Live: 1,
-          Completed: 2,
-          Unsuccessful: 3,
-        };
-
         const availableInfo = document.querySelector('.listing-available-info');
-        if (!availableInfo) return AuctionStatusEnum.Live; // Default to 'Live' if no info is available
+        if (!availableInfo) return 1; 
         if (availableInfo.innerHTML.includes('Sold for')) {
-          return AuctionStatusEnum.Completed;
+          return 2; // completed
         } else if (availableInfo.innerHTML.includes('Bid to') || availableInfo.innerHTML.includes('Withdrawn on')) {
-          return AuctionStatusEnum.Unsuccessful;
+          return 3; // unsuccessful
         }
-        return AuctionStatusEnum.Live;
+        return 1; // assume live if none of the above match
       });
 
-      // Update status only if it's live or completed and the current status has changed
-      if (auction.attributes.some((attr) => attr.value === 1 || attr.value === 2) && auction.attributes.some((attr) => attr.key === 'status' && attr.value !== currentStatus)) {
+      console.log(`Current status for auctionID: ${auction.auction_id} is ${currentStatus}`);
+
+      // first, update the auction status in the database if it's different
+      if (auction.attributes.some((attr) => attr.key === 'status' && attr.value !== currentStatus)) {
         await Auction.updateOne({ _id: auction._id, 'attributes.key': 'status' }, { $set: { 'attributes.$.value': currentStatus } });
         console.log(`Updated status for auctionID: ${auction.auction_id}`);
       }
 
-      // Check and update the final price regardless of the status
-      if (currentStatus === 2 || auction.attributes.some((attr) => attr.value === 3 || attr.value === 4)) {
+      // if the auction is completed or unsuccessful, get the final price
+      if (currentStatus !== 1) {
+        // if not live
         const finalPrice = await getFinalPriceFromPage(auction.page_url, browser);
         if (finalPrice !== null) {
           await Auction.updateOne(
@@ -495,11 +494,8 @@ async function checkAndUpdateAuctionStatus(browser) {
         }
       }
 
-      console.log(`Successfully processed auction ID: ${auction.auction_id}`);
-    } catch (error) {
-      console.error(`Error processing auctionID: ${auction.auction_id}`, error);
-    } finally {
       await page.close();
+      console.log(`Successfully processed auction ID: ${auction.auction_id}`);
     }
   }
 
@@ -507,8 +503,7 @@ async function checkAndUpdateAuctionStatus(browser) {
 }
 
 const scrapeAuctions = async () => {
-  console.log('Cron job started');
-  // const browser = await puppeteer.launch({ headless: 'new' });
+  console.log('Scraping job started');
   const browser = await puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
@@ -517,14 +512,9 @@ const scrapeAuctions = async () => {
   });
 
   try {
-    // for scraping new data
     console.log('Starting the scraping job...');
     await getData(website, browser);
     console.log('Scraping job finished');
-
-    console.log('Starting the status update job...');
-    await checkAndUpdateAuctionStatus(browser);
-    console.log('Status update job finished');
 
     console.log('Outputting data...');
     await outputData();
@@ -537,9 +527,35 @@ const scrapeAuctions = async () => {
     if (mongoose.connection.readyState === 1) {
       await mongoose.disconnect();
     }
-
     console.log('Browser closed and MongoDB disconnected');
   }
 };
 
-export default scrapeAuctions;
+const updateAuctionStatus = async () => {
+  console.log('Status update job started');
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+  });
+
+  try {
+    console.log('Starting the status update job...');
+    await checkAndUpdateAuctionStatus(browser);
+    console.log('Status update job finished');
+  } catch (error) {
+    console.error('An error occurred during the status update job:', error);
+  } finally {
+    console.log('Closing browser and disconnecting from MongoDB...');
+    await browser.close();
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.disconnect();
+    }
+    console.log('Browser closed and MongoDB disconnected');
+  }
+};
+
+export default scrapeAuctions; 
+
+export { updateAuctionStatus }
