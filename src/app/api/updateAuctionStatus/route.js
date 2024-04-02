@@ -1,4 +1,4 @@
-import connectToMongoDB from '@/lib/mongodb';
+import connectToMongoDB from '../../../lib/mongodb';
 import { updateAuctionStatus } from '@/utils/auctionScraper';
 import { NextResponse } from 'next/server';
 

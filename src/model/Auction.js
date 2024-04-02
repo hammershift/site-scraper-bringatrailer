@@ -37,6 +37,7 @@ const auctionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Auction = mongoose.models.auctions || mongoose.model('auction', auctionSchema);
+const Auction = mongoose.model('Auction', auctionSchema);
+// const Auction = mongoose.models.auctions || mongoose.model('auction', auctionSchema);
 
 export default Auction;
