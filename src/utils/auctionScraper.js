@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import Auction from '../model/Auction';
 import chromium from 'chrome-aws-lambda';
-const puppeteer = chromium.puppeteer;
 
 const website = 'https://bringatrailer.com/auctions/';
 const batchSize = 20;
